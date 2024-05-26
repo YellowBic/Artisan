@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="mainmenu.html">Home</a></li>
+            <li><a href="profile.html">Profile</a></li>
+            <li><a href="order.html">Orders</a></li>
+        </ul>
+        <div id="artisanName" class="artisan-name"></div>
+    </nav>
+    <div class="main-content">
+        <h1>My Items</h1>
+        <div id="itemsContainer" class="items-container"></div>
+        <div class="add-item-button">
+            <a href="addItem.html" class="round-button">+</a>
+            <p>Add New Item</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const artisanNameElement = document.getElementById('artisanName');
+            const itemsContainer = document.getElementById('itemsContainer');
+            const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+
+            if (!loggedInUser || loggedInUser.role !== 'artisan') {
+                alert('You must be logged in as an artisan to view this page.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            artisanNameElement.textContent = `Logged in as: ${loggedInUser.username}`;
+
+            let items = localStorage.getItem('items');
+            if (items) {
+                items = JSON.parse(items);
+                const artisanItems = items.filter(item => item.uploadedBy === loggedInUser.username);
+                artisanItems.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'item';
+
+                    const itemImage = document.createElement('img');
+                    itemImage.src = item.image;
+                    itemImage.alt = item.name;
+
+                    const itemName = document.createElement('h2');
+                    itemName.textContent = item.name;
+
+                    const itemPrice = document.createElement('p');
+                    itemPrice.textContent = `Price: $${item.price}`;
+
+                    itemDiv.appendChild(itemImage);
+                    itemDiv.appendChild(itemName);
+                    itemDiv.appendChild(itemPrice);
+
+                    itemsContainer.appendChild(itemDiv);
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Item Preview</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="mainmenu.html">Home</a></li>
+            <li><a href="myshop.html">My Shop</a></li>
+            <li><a href="cart.html">Cart</a></li>
+            <li><a href="profile.html">Profile</a></li>
+            <li><a href="order.html">Orders</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <h1 id="itemName">Item Name</h1>
+        <img id="itemImage" src="" alt="Item Image">
+        <p id="itemDescription">Item Description</p>
+        <p id="itemCategory">Category: <span></span></p>
+        <p id="itemPrice">Price: $<span></span></p>
+        <p id="artisanName">Artisan: <span></span></p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const itemName = urlParams.get('item');
+
+            let items = localStorage.getItem('items');
+            if (items) {
+                items = JSON.parse(items);
+                const item = items.find(i => i.name === itemName);
+
+                if (item) {
+                    document.getElementById('itemName').textContent = item.name;
+                    document.getElementById('itemImage').src = item.image;
+                    document.getElementById('itemImage').alt = item.name;
+                    document.getElementById('itemDescription').textContent = item.description;
+                    document.getElementById('itemCategory').querySelector('span').textContent = item.category;
+                    document.getElementById('itemPrice').querySelector('span').textContent = item.price;
+                    document.getElementById('artisanName').querySelector('span').textContent = item.uploadedBy;
+                } else {
+                    alert('Item not found!');
+                    window.location.href = 'mainmenu.html';
+                }
+            } else {
+                alert('No items available!');
+                window.location.href = 'mainmenu.html';
+            }
+        });
+    </script>
+</body>
+</html>

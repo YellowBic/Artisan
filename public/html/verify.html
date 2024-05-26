@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Email Verification</h1>
+        <form id="verifyForm">
+            <label for="verificationCode">Enter Verification Code:</label>
+            <input type="text" id="verificationCode" name="verificationCode" required>
+            <button type="submit">Verify</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('verifyForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const verificationCode = document.getElementById('verificationCode').value;
+            const tempUser = JSON.parse(localStorage.getItem('tempUser'));
+
+            fetch('/api/verify-code', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: tempUser.email, verificationCode })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    let users = localStorage.getItem('users');
+                    if (!users) {
+                        users = [];
+                    } else {
+                        users = JSON.parse(users);
+                    }
+                    users.push(tempUser);
+                    localStorage.setItem('users', JSON.stringify(users));
+                    localStorage.removeItem('tempUser');
+
+                    alert('Email verified successfully. You can now log in.');
+                    window.location.href = 'login.html';
+                } else {
+                    alert('Invalid verification code or code expired.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Item</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="mainmenu.html">Home</a></li>
+            <li><a href="shop.html">Shop</a></li>
+            <li><a href="cart.html">Cart</a></li>
+            <li><a href="profile.html">Profile</a></li>
+            <li><a href="order.html">Orders</a></li>
+            <li><a href="addItem.html">Add Item</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <h1>Add a New Item for Sale</h1>
+        <form id="addItemForm">
+            <label for="itemName">Item Name:</label>
+            <input type="text" id="itemName" name="itemName" required>
+
+            <label for="itemDescription">Item Description:</label>
+            <textarea id="itemDescription" name="itemDescription" rows="4" required></textarea>
+
+            <label for="itemPrice">Price ($):</label>
+            <input type="number" id="itemPrice" name="itemPrice" step="0.01" required>
+
+            <label for="itemQuantity">Quantity:</label>
+            <input type="number" id="itemQuantity" name="itemQuantity" required>
+
+            <label for="itemCategory">Category:</label>
+            <select id="itemCategory" name="itemCategory" required>
+                <option value="jewelry">Jewelry</option>
+                <option value="clothing">Clothing</option>
+                <option value="art">Art</option>
+                <option value="homeDecor">Home Decor</option>
+                <option value="other">Other</option>
+            </select>
+
+            <label for="itemImage">Upload Image:</label>
+            <input type="file" id="itemImage" name="itemImage" accept=".jpg, .jpeg, .png" required>
+
+            <button type="submit">Add Item</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('addItemForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const itemName = document.getElementById('itemName').value;
+            const itemDescription = document.getElementById('itemDescription').value;
+            const itemPrice = document.getElementById('itemPrice').value;
+            const itemQuantity = document.getElementById('itemQuantity').value;
+            const itemCategory = document.getElementById('itemCategory').value;
+            const itemImage = document.getElementById('itemImage').files[0];
+            const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+
+            if (itemImage && loggedInUser) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const itemData = {
+                        name: itemName,
+                        description: itemDescription,
+                        price: itemPrice,
+                        quantity: itemQuantity,
+                        category: itemCategory,
+                        image: e.target.result,
+                        uploadedBy: loggedInUser.username
+                    };
+
+                    let items = localStorage.getItem('items');
+                    if (!items) {
+                        items = [];
+                    } else {
+                        items = JSON.parse(items);
+                    }
+                    items.push(itemData);
+                    localStorage.setItem('items', JSON.stringify(items));
+
+                    alert('Item added successfully!');
+                    window.location.href = 'mainmenu.html';
+                };
+                reader.readAsDataURL(itemImage);
+            }
+        });
+    </script>
+</body>
+</html>
